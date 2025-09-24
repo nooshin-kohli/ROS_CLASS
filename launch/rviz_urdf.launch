@@ -1,0 +1,20 @@
+<launch> 
+
+    <arg name="model" default="$(find urdf_learning)/urdf/my_robot.urdf"/>
+
+    <param name="robot_description" command="cat $(arg model)"/>
+
+    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> -->
+
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+    <!-- Combine joint values -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="rsp">
+    
+  <param name="publish_frequency" type="double" value="10.0"/>
+</node>
+
+
+    <!--show in rviz-->
+    <node name="rviz" pkg="rviz" type="rviz" args=""/>
+
+</launch>
