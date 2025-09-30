@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<robot name="three_dof_arm">
+
+  <!-- =========================
+       Links
+       ========================= -->
+
+  <!-- Fixed base -->
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="2.0"/>
+      <inertia ixx="0.02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.02"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.20 0.20 0.10"/></geometry>
+      <material name="grey"><color rgba="0.6 0.6 0.6 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.20 0.20 0.10"/></geometry>
+    </collision>
+  </link>
+
+  <!-- Link 1 (0.30 m) -->
+  <link name="link1">
+    <inertial>
+      <origin xyz="0.15 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="0.003" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.02"/>
+    </inertial>
+    <visual>
+      <!-- Cylinder’s axis is Z; rotate so it lies along X -->
+      <origin xyz="0.15 0 0" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.03" length="0.30"/></geometry>
+      <material name="blue"><color rgba="0.1 0.3 0.9 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0.15 0 0" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.03" length="0.30"/></geometry>
+    </collision>
+  </link>
+
+  <!-- Link 2 (0.25 m) -->
+  <link name="link2">
+    <inertial>
+      <origin xyz="0.125 0 0" rpy="0 0 0"/>
+      <mass value="0.8"/>
+      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.012" iyz="0" izz="0.012"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.125 0 0" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.028" length="0.25"/></geometry>
+      <material name="green"><color rgba="0.1 0.8 0.3 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0.125 0 0" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.028" length="0.25"/></geometry>
+    </collision>
+  </link>
+
+  <!-- Link 3 (0.20 m) -->
+  <link name="link3">
+    <inertial>
+      <origin xyz="0.10 0 0" rpy="0 0 0"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.008" iyz="0" izz="0.008"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.10 0 0" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.025" length="0.20"/></geometry>
+      <material name="red"><color rgba="0.9 0.2 0.2 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0.10 0 0" rpy="0 1.57079632679 0"/>
+      <geometry><cylinder radius="0.025" length="0.20"/></geometry>
+    </collision>
+  </link>
+
+  <!-- End-effector -->
+  <link name="ee_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="0.03"/></geometry>
+      <material name="yellow"><color rgba="1 0.9 0.2 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="0.03"/></geometry>
+    </collision>
+  </link>
+
+  <!-- =========================
+       Joints (RRR)
+       ========================= -->
+
+  <!-- Joint 1: base yaw about Z -->
+  <joint name="joint1" type="revolute">
+    <parent link="base_link"/>
+    <child  link="link1"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.1416" upper="3.1416" effort="20" velocity="2.0"/>
+    <dynamics damping="0.1" friction="0.0"/>
+  </joint>
+
+  <!-- Joint 2: shoulder pitch about Y -->
+  <joint name="joint2" type="revolute">
+    <parent link="link1"/>
+    <child  link="link2"/>
+    <!-- located at the distal end of link1 -->
+    <origin xyz="0.30 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.5" upper="2.5" effort="15" velocity="2.0"/>
+    <dynamics damping="0.05" friction="0.0"/>
+  </joint>
+
+  <!-- Joint 3: elbow pitch about Y -->
+  <joint name="joint3" type="revolute">
+    <parent link="link2"/>
+    <child  link="link3"/>
+    <!-- located at the distal end of link2 -->
+    <origin xyz="0.25 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.5" upper="2.5" effort="10" velocity="2.0"/>
+    <dynamics damping="0.05" friction="0.0"/>
+  </joint>
+
+  <!-- Fixed joint to place the EE at the distal end of link3 -->
+  <joint name="ee_fixed" type="fixed">
+    <parent link="link3"/>
+    <child  link="ee_link"/>
+    <origin xyz="0.20 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>
+
